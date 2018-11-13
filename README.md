@@ -1,3 +1,4 @@
 # wybemf
 an open source platform to connect dreamers  
-coming soon...
+todo for now : make feed more effective 
+```Documentation coming soon...```
