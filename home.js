@@ -41,22 +41,7 @@ firebase.auth().onAuthStateChanged(function(user) {
                     easing: "bounce",
                     strokeWidth: 6,
                     });
-                    var startDate = doc.data().time;
-                    var maxAdded = new Date(startDate + 60 * 60 * 24 * 1000);
-                    var now = new Date();
-                    var timeDifference = now.getTime() - startDate;
-                    var percentage =  timeDifference / maxAdded.getTime() * 10000;
-                    percentage = 1 - percentage;
-                    circle.animate(`${percentage}`);
-
-                    setInterval( () => {
-                      var maxAdded = new Date(startDate + 60 * 60 * 24 * 1000);
-                      var now = new Date();
-                      var timeDifference = now.getTime() - startDate;
-                      var percentage = timeDifference / maxAdded.getTime() * 10000;
-                      percentage = 1 - percentage;
-                      circle.animate(`${percentage}`);
-                      },60000);
+                  circle.animate(1.0);
                   });
                 }
               });
@@ -312,6 +297,12 @@ db.collection("users").doc(user.uid)
   })
 .then(function(){
     var user = firebase.auth().currentUser;
+    db.collection("username").doc(user.displayName).delete().then(function(){
+      db.collection("username").doc(updatedUsername).set({
+        username: updatedUsername,
+        takenBy: user.uid,
+    });
+    });
     user.updateProfile({
       displayName: updatedUsername,
       photoURL: updatedUserimg
