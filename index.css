@@ -154,6 +154,14 @@ nav a:hover {
     background-size:cover !important;
     border-radius:50%;
     display:inline-block;
+    transition:0.4s ease-in-out;
+}
+#userimg svg {
+    position:relative;
+    top:-10px;
+    left:-10px;
+    width:180px !important;
+    height:180px !important;
 }
 #userinfo {
     display:inline-block;
@@ -163,6 +171,110 @@ nav a:hover {
 }
 #userinfo table tr td {
     padding-right:8vw !important;
+}
+#followers {
+    color:#000;
+    transition:0.4s ease-in-out;
+}
+#followers:hover {
+    color:rgb(255, 100, 100);
+    cursor:pointer;
+}
+#following {
+    color:#000;
+    transition:0.4s ease-in-out;
+}
+#following:hover {
+    color:rgb(255, 100, 100);
+    cursor:pointer;
+}
+.forFollow {
+    position:absolute;
+    margin-left:28vw;
+    margin-top:-6vh;
+    font-size:18px;
+    transition:0.4s ease-in-out;
+}
+.forFollow:hover {
+    cursor:pointer;
+    color:rgb(255, 100, 100);
+    transform:scale(1.2);
+}
+#follow-container {
+    width:100vw;
+    height:100vh;
+    background:rgba(0,0,0,0.6);
+    position:fixed;
+    top:0;
+    z-index:11;
+    text-align:center;
+    display:none;
+    justify-content:center;
+    flex-direction:column;
+}
+#follow-stats {
+    width:30vw;
+    box-shadow:0px 0px 1px #d5d5d5;
+    font-size:16px;
+    padding:2%;
+    padding-bottom:3%;
+    z-index:10;
+    background:#fff;
+    border-radius:8px;
+    text-align:left;
+    max-height:60vh;
+    overflow-y:auto;
+}
+#follow-stats a {
+    color:#000;
+    text-decoration:none;
+}
+#following-stats {
+    width:30vw;
+    box-shadow:0px 0px 1px #d5d5d5;
+    font-size:16px;
+    padding:2%;
+    z-index:10;
+    background:#fff;
+    border-radius:8px;
+    text-align:left;
+    max-height:60vh;
+    overflow-y:auto;
+}
+#following-stats a {
+    color:#000;
+    text-decoration:none;
+}
+.followTbl {
+    width:100%;
+    border:0px;
+    margin:10px 0px;
+}
+.followTbl tr {
+    border-radius:8px;
+    box-shadow:0px 0px 1px #d5d5d5;
+    width:100%;
+    margin:0px 0px;
+    transition:0.4s ease-in-out;
+    text-align:left;
+}
+.followTbl tr:hover {
+    box-shadow:0px 4px 6px #d5d5d5;
+    cursor:pointer;
+}
+.followTbl tr td {
+    padding:10px 20px;
+    text-align:left;
+    width:40%;
+}
+.followTbl tr td div {
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    background-size:cover !important;
+    margin:0;
+    padding:0;
+    border:0px;
 }
 #userinfo button {
     font-family: 'Poppins', sans-serif;
@@ -558,7 +670,7 @@ input,button:focus {
     background:rgba(0,0,0,0.6);
     position:fixed;
     top:0;
-    z-index:9;
+    z-index:11;
     text-align:center;
     display:none;
     justify-content:center;
@@ -646,7 +758,7 @@ input,button:focus {
     background:rgba(0,0,0,0.6);
     position:fixed;
     top:0;
-    z-index:9;
+    z-index:11;
     text-align:center;
     display:none;
     justify-content:center;
@@ -812,6 +924,14 @@ input,button:focus {
         padding:6vh 4vw;
         height:88vh;
         max-height:88vh;
+    }
+    #following-stats {
+        width:70vw;
+        padding:5%;
+    }
+    #follow-stats {
+        width:70vw;
+        padding:5%;
     }
 }
 

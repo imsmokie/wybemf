@@ -10,7 +10,7 @@ if(user){
         return;
     }
     if(!window.location.hash){
-        //post shit for normal user
+    //post data for normal user
     db.collection("posts").where("textby", "==", user.uid).orderBy("time", "desc")
     .get()
     .then(function(querySnapshot){
@@ -75,6 +75,43 @@ if(user){
             $("#loading").removeClass("animated fadeOut");
             $("#loading").css("display","none");
           },800);
+          db.collection("dreams").where("dreamBy", "==", user.uid)
+          .get()
+          .then(function(querySnapshot){
+            if(querySnapshot.empty == false){
+            $('#userimg').attr("onclick","showDreamProfile()");
+            $("#userimg").mouseover(function() {
+                $(this).css("cursor","pointer");
+                $(this).css("transform","scale(1.1)");
+              });
+              $("#userimg").mouseout(function() {
+                $(this).css("cursor","pointer");
+                $(this).css("transform","scale(1)");
+              });
+            var circle = new ProgressBar.Circle(`#userimg`, {
+                color: "rgb(255,100,100)",
+                trailColor: "#fff",
+                trailWidth: 0,
+                duration: 1800,
+                easing: "bounce",
+                strokeWidth: 4,
+                });
+            circle.animate(1.0);
+            }
+            querySnapshot.forEach(function(dream){
+                $("#dream-container").append(`
+                <center>
+                <div id="theDream">
+                    <div class="close" onclick="hideDream()" style="top:-2vh;"><i class="fas fa-times"></i></div>
+                    <div id="dreamerimg" style="background:url('${user.photoURL}') center center;"></div>
+                        <b id="dream-username">@${user.displayName}</b>
+                        <p id="dream-text">${dream.data().dreamText}</p>
+                        <time id="dream-time">${new Date(dream.data().time).toDateString()} @ ${new Date(dream.data().time).toLocaleTimeString()}</time>
+                </div>
+                </center>
+                `);
+            });
+           });
         },1000);
     })
     .catch(function(error) {
@@ -86,16 +123,56 @@ if(user){
         $("#whospost").html('@'+user.displayName+"'s Posts");
         $("#which-btn").html('<a href="home.html#edit"><button>Edit Profile</button></a>');
 
-        //get followers
-        db.collection("follow").where("followed", "==", user.uid)
-        .onSnapshot(function(querySnapshot){
-            $('#followers').html(`${querySnapshot.size}<br>Followers`);
+       //get followers
+       db.collection("follow").where("followed", "==", user.uid)
+       .onSnapshot(function(querySnapshot){
+        $('#followers').html(`${querySnapshot.size}<br>Followers`);
+        if(querySnapshot.empty == true){
+            $('#follow-stats').append("nothing to see here");
+            return;
+        }
+        querySnapshot.forEach(function(doc){
+            db.collection("users").doc(doc.data().followedby).get().then(function(user){
+            if (doc.exists) {
+            $('#follow-stats').append(`
+            <a href="profile.html#${user.data().username}" target="_blank">
+            <table class="followTbl">            
+            <tr>
+                <td><div style="background:url('${user.data().userimg}') center center;"></div></td>
+                <td>${user.data().username}</td>
+            </tr>
+            </table>
+            </a>
+            `);
+         }
         });
-        //get following
-        db.collection("follow").where("followedby", "==", user.uid)
-        .onSnapshot(function(querySnapshot){
-           $('#following').html(`${querySnapshot.size}<br>Following`);
         });
+       });
+       //get following
+       db.collection("follow").where("followedby", "==", user.uid)
+       .onSnapshot(function(querySnapshot){
+          $('#following').html(`${querySnapshot.size}<br>Following`);
+          if(querySnapshot.empty == true){
+            $('#following-stats').append("nothing to see here");
+            return;
+           }
+          querySnapshot.forEach(function(doc){
+            db.collection("users").doc(doc.data().followed).get().then(function(user){
+                if(doc.exists){
+                $('#following-stats').append(`
+                <a href="profile.html#${user.data().username}" target="_blank">
+                <table class="followTbl">            
+                <tr>
+                    <td><div style="background:url('${user.data().userimg}') center center;"></div></td>
+                    <td>${user.data().username}</td>
+                </tr>
+                </table>
+                </a>
+                `);
+             }
+            });
+        });
+       });
 
     }else{
     var getUserName = window.location.hash.slice(1);
@@ -107,7 +184,7 @@ if(user){
             return;
         }
         querySnapshot.forEach(function(doc) {
-    //post shit here for #
+    //post data here for #
     db.collection("posts").where("textby", "==", doc.data().userid).orderBy("time", "desc")
     .get()
     .then(function(querySnapshot){
@@ -120,6 +197,43 @@ if(user){
               $("#loading").removeClass("animated fadeOut");
               $("#loading").css("display","none");
             },800);
+            db.collection("dreams").where("dreamBy", "==", doc.data().userid)
+            .get()
+            .then(function(querySnapshot){
+            if(querySnapshot.empty == false){
+              $('#userimg').attr("onclick","showDreamProfile()");
+              $("#userimg").mouseover(function() {
+                $(this).css("cursor","pointer");
+                $(this).css("transform","scale(1.1)");
+              });
+              $("#userimg").mouseout(function() {
+                $(this).css("cursor","pointer");
+                $(this).css("transform","scale(1)");
+              });
+              var circle = new ProgressBar.Circle(`#userimg`, {
+                  color: "rgb(255,100,100)",
+                  trailColor: "#fff",
+                  trailWidth: 0,
+                  duration: 1800,
+                  easing: "bounce",
+                  strokeWidth: 4,
+                  });
+              circle.animate(1.0);
+              }
+              querySnapshot.forEach(function(dream){
+                  $("#dream-container").append(`
+                  <center>
+                  <div id="theDream">
+                      <div class="close" onclick="hideDream()" style="top:-2vh;"><i class="fas fa-times"></i></div>
+                      <div id="dreamerimg" style="background:url('${doc.data().userimg}') center center;"></div>
+                          <b id="dream-username">@${doc.data().username}</b>
+                          <p id="dream-text">${dream.data().dreamText}</p>
+                          <time id="dream-time">${new Date(dream.data().time).toDateString()} @ ${new Date(dream.data().time).toLocaleTimeString()}</time>
+                  </div>
+                  </center>
+                  `);
+              });
+             });
           },1000);
         $('#howmanypost').html(querySnapshot.size+"<br>Posts");
         querySnapshot.forEach(function(doc) {
@@ -223,12 +337,52 @@ if(user){
                //get followers
                db.collection("follow").where("followed", "==", doc.data().userid)
                .onSnapshot(function(querySnapshot){
-                   $('#followers').html(`${querySnapshot.size}<br>Followers`);
+                $('#followers').html(`${querySnapshot.size}<br>Followers`);
+                if(querySnapshot.empty == true){
+                    $('#follow-stats').append("nothing to see here");
+                    return;
+                }
+                querySnapshot.forEach(function(doc){
+                    db.collection("users").doc(doc.data().followedby).get().then(function(user){
+                    if (doc.exists) {
+                    $('#follow-stats').append(`
+                    <a href="profile.html#${user.data().username}" target="_blank">
+                    <table class="followTbl">            
+                    <tr>
+                        <td><div style="background:url('${user.data().userimg}') center center;"></div></td>
+                        <td>${user.data().username}</td>
+                    </tr>
+                    </table>
+                    </a>
+                    `);
+                 }
+                });
+                });
                });
                //get following
                db.collection("follow").where("followedby", "==", doc.data().userid)
                .onSnapshot(function(querySnapshot){
                   $('#following').html(`${querySnapshot.size}<br>Following`);
+                  if(querySnapshot.empty == true){
+                    $('#following-stats').append("nothing to see here");
+                    return;
+                   }
+                  querySnapshot.forEach(function(doc){
+                    db.collection("users").doc(doc.data().followed).get().then(function(user){
+                        if(doc.exists){
+                        $('#following-stats').append(`
+                        <a href="profile.html#${user.data().username}" target="_blank">
+                        <table class="followTbl">            
+                        <tr>
+                            <td><div style="background:url('${user.data().userimg}') center center;"></div></td>
+                            <td>${user.data().username}</td>
+                        </tr>
+                        </table>
+                        </a>
+                        `);
+                     }
+                    });
+                });
                });
         });
         })
@@ -240,6 +394,50 @@ if(user){
     window.location.assign("index.html");
 }
 });
+
+function showDreamProfile(){
+$('#dream-container').css("display","flex");
+$('#dream-container').addClass("animated fadeIn");
+setTimeout(function(){
+    $('#dream-container').removeClass("animated fadeIn");
+},800);
+}
+
+function hideDream(){
+    $('#dream-container').addClass("animated fadeOut");
+setTimeout(function(){
+    $('#dream-container').css("display","none");
+    $('#dream-container').removeClass("animated fadeOut");
+},800);
+}
+
+$("#followers").click(function(){
+$('#follow-container').css("display","flex");
+$('#follow-container').addClass("animated fadeIn");
+$('#follow-stats').css("display","inherit");
+$('#following-stats').css("display","none");
+setTimeout(function(){
+    $('#follow-container').removeClass("animated fadeIn");
+},800);
+});
+
+$("#following").click(function(){
+$('#follow-container').css("display","flex");
+$('#follow-container').addClass("animated fadeIn");
+$('#follow-stats').css("display","none");
+$('#following-stats').css("display","inherit");
+setTimeout(function(){
+    $('#follow-container').removeClass("animated fadeIn");
+},800);
+});
+
+function followhide(){
+$('#follow-container').addClass("animated fadeOut");
+setTimeout(function(){
+    $('#follow-container').css("display","none");
+    $('#follow-container').removeClass("animated fadeOut");
+},800);
+}
 
 function follow(followid){
 $('#follow').attr("disabled",true);
