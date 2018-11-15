@@ -11,6 +11,28 @@ firebase.auth().onAuthStateChanged(function(user) {
         $("#userimg").css("background","url('"+user.photoURL+"') center center");
         $("#home-username").val(user.displayName);
         $("#home-userimg").val(user.photoURL);
+        //get notification
+        db.collection("notification").where("notificationFor", "==", user.uid).orderBy("time","desc")
+        .onSnapshot(function(snapshot) {
+          snapshot.docChanges().forEach(function(change){
+            if(change.type === "added"){
+            db.collection("users").doc(change.doc.data().notificationBy).get().then(function(docs){
+            $('#theseNotify').html(`<i class="fas fa-bell circle"></i><sup>${snapshot.size}</sup>`);
+            $('#notification').append(`
+            <h4 id="notify${change.doc.id}"><a href="profile.html#wybemf" target="_blank">@${docs.data().username}</a> ${change.doc.data().type}<button onclick="deleteNotify('${change.doc.id}')"><i class="far fa-trash-alt"></i></button></h4>
+           `);
+            });
+            $('#newNotify')[0].play();
+           };
+          });
+          if(snapshot.empty == true){
+            $('#theseNotify').html('<i class="fas fa-bell circle"></i>');
+          }else{
+            $('#theseNotify').html(`<i class="fas fa-bell circle"></i><sup>${snapshot.size}</sup>`);
+            $('#theseNotify').attr("onclick","notification()");
+            $('#hideNotify').attr("onclick","hidenotification()");
+          }
+         });
         //get following
         db.collection("follow").where("followedby", "==", user.uid)
         .get()
@@ -349,6 +371,34 @@ function hidedit(){
     $('#edit-container').css("display","none");
     $('#edit-container').removeClass("animated fadeOut");
   },800);
+}
+
+function notification(){
+  $('#notification-container').css("display","flex");
+  $('#notification-container').addClass("animated fadeIn");
+  setTimeout(function(){
+    $('#notification-container').removeClass("animated fadeIn");
+  },800);
+}
+
+function hidenotification(){
+  $('#notification-container').addClass("animated fadeOut");
+  setTimeout(function(){
+    $('#notification-container').css("display","none");
+    $('#notification-container').removeClass("animated fadeOut");
+  },800);
+}
+
+function deleteNotify(notifyId) {
+  db.collection("notification").doc(notifyId).delete().then(function(){
+    $(`#notify${notifyId}`).addClass("animated fadeOut");
+    setTimeout(function(){
+      $(`#notify${notifyId}`).css("display","none");
+      $(`#notify${notifyId}`).removeClass("animated fadeOut");
+    },800);
+  }).catch(function(error){
+    console.log(error);
+  });
 }
 
 function showDream(dreamid){
