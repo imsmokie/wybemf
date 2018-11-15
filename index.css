@@ -494,6 +494,13 @@ input,button:focus {
     display:inline-block;
     transition:0.4s ease-in-out;
     background-size:cover !important;
+    text-align:center;
+}
+.option1 sup {
+    position:absolute;
+    margin-top:1vh;
+    font-size:16px;
+    color:rgb(255, 100, 100);
 }
 .option2 {
     width:70px;
@@ -519,7 +526,6 @@ input,button:focus {
 }
 .circle {
     position:relative;
-    left:26px;
     top:20px;
     transition:0.4s ease-in-out;
 }
@@ -619,6 +625,15 @@ input,button:focus {
 }
 #form input::placeholder {
     color:#000;
+}
+#form a {
+    color:#000;
+    text-decoration:none;
+    transition:0.4s ease-in-out;
+    text-align:left;
+}
+#form a:hover {
+    color:rgb(255, 100, 100);
 }
 
 /* details */
@@ -795,6 +810,51 @@ input,button:focus {
     font-size:24px;
     position: relative;
     top:-5px;
+}
+
+/*notification*/
+#notification-container {
+    width:100vw;
+    height:100vh;
+    background:rgba(0,0,0,0.6);
+    position:fixed;
+    top:0;
+    z-index:11;
+    text-align:center;
+    display:none;
+    justify-content:center;
+    flex-direction:column;
+}
+#notification {
+    width:60%;
+    height:auto;
+    padding:4%;
+    background:white;
+    border-radius:5px;
+    max-height:70vh;
+    overflow:auto;
+    text-align:left;
+}
+#notification h4 a {
+    color:rgb(255, 100, 100);
+    text-decoration:none;
+}
+#notification h4 button {
+    float:right;
+    padding:5px 10px;
+    font-size:16px;
+    color:#000;
+    border:0;
+    background:transparent;
+    transition:0.4s ease-in-out;
+}
+#notification h4 button:hover {
+    color:rgb(255, 100, 100);
+    transform:scale(1.1);
+    cursor:pointer;
+}
+#notification h4 button:focus {
+    outline:none;
 }
 
 @media (max-width:800px) {

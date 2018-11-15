@@ -63,6 +63,15 @@
             </div>
         </center>
     </div>
+    <audio src="sound/index.mp3" id="newNotify"></audio>
+    <div id="notification-container">
+        <center>
+            <div id="notification">
+                <div class="close" id="hideNotify" style="top:0vh;"><i class="fas fa-times"></i></div>
+                <h1>Notifications</h1>
+                </div>
+        </center>
+    </div>
     <div id="edit-container">
         <center>
     <div id="edit">
@@ -83,8 +92,9 @@
 
     <div id="explore">
         <div id="options">
-            <div id="option1" class="option1" onclick="showpost()"><i class="fas fa-plus circle plus"></i></div>
-            <div class="option1" onclick="showedit()"><i class="fas fa-edit circle"></i></div>
+            <div id="option1" class="option1" onclick="showpost()"><i class="fas fa-plus circle"></i></div>
+            <div class="option1" onclick="showedit()"><i class="fas fa-pencil-alt circle"></i></div>
+            <div class="option1" id="theseNotify"></div>
         </div>
 
         <div id="newpost" class="">
