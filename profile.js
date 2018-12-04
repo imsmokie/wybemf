@@ -1,12 +1,7 @@
-var db = firebase.firestore();
-db.settings({
-  timestampsInSnapshots: true
-});
-
 firebase.auth().onAuthStateChanged(function(user) {
 if(user){
     if(!user.displayName){
-        window.location.assign("details.html");
+        window.location.assign("/details");
         return;
     }
     if(!window.location.hash){
@@ -22,17 +17,19 @@ if(user){
             db.collection("users").where("userid", "==", doc.data().textby)
              .get()
              .then(function(querySnapshot){
+                var text = doc.data().text;
+                text = text.replace(/#(\w+)/g, '<a href="/cloud#$1" target="_blank">#$1</a>');
              querySnapshot.forEach(function(document){
                 $("#posts").append(
                     ` <div class="container">
                     <img src="" width="100%" height="auto">
                     <div class="details">
                         <div class="who_posted">
-                            <a href="profile.html#${document.data().username}" target="_blank"><b>@${document.data().username}</b></a>
+                            <a href="/profile#${document.data().username}" target="_blank"><b>@${document.data().username}</b></a>
                             <time>${new Date(doc.data().time).toDateString()} @ ${new Date(doc.data().time).toLocaleTimeString()}</time>
                         </div>
                         <p>
-                        ${doc.data().text}
+                        ${text}
                         </p>
                         <div class="interact">
                             <button id="like_${doc.id}" onclick="like('${doc.id}')">
@@ -121,7 +118,7 @@ if(user){
         $("#userimg").css("background","url('"+user.photoURL+"') center center");
         $("#profile-username").html('@'+user.displayName);
         $("#whospost").html('@'+user.displayName+"'s Posts");
-        $("#which-btn").html('<a href="home.html#edit"><button>Edit Profile</button></a>');
+        $("#which-btn").html('<a href="/home#edit"><button>Edit Profile</button></a>');
 
        //get followers
        db.collection("follow").where("followed", "==", user.uid)
@@ -135,7 +132,7 @@ if(user){
             db.collection("users").doc(doc.data().followedby).get().then(function(user){
             if (doc.exists) {
             $('#follow-stats').append(`
-            <a href="profile.html#${user.data().username}" target="_blank">
+            <a href="/profile#${user.data().username}" target="_blank">
             <table class="followTbl">            
             <tr>
                 <td><div style="background:url('${user.data().userimg}') center center;"></div></td>
@@ -157,20 +154,35 @@ if(user){
             return;
            }
           querySnapshot.forEach(function(doc){
-            db.collection("users").doc(doc.data().followed).get().then(function(user){
-                if(doc.exists){
-                $('#following-stats').append(`
-                <a href="profile.html#${user.data().username}" target="_blank">
-                <table class="followTbl">            
-                <tr>
-                    <td><div style="background:url('${user.data().userimg}') center center;"></div></td>
-                    <td>${user.data().username}</td>
-                </tr>
-                </table>
-                </a>
-                `);
-             }
-            });
+            db.collection("cloud").doc(doc.data().followed).get().then(function(cloud){
+            if(cloud.exists){
+                    $('#following-stats').append(`
+                    <a href="/cloud#${cloud.data().cloudName}" target="_blank">
+                    <table class="followTbl">            
+                    <tr>
+                        <td><div style="background:url('${cloud.data().cloudImage}') center center;"></div></td>
+                        <td>#${cloud.data().cloudName}</td>
+                    </tr>
+                    </table>
+                    </a>
+                    `);
+            }else{
+                db.collection("users").doc(doc.data().followed).get().then(function(user){
+                    if(doc.exists){
+                    $('#following-stats').append(`
+                    <a href="/profile#${user.data().username}" target="_blank">
+                    <table class="followTbl">            
+                    <tr>
+                        <td><div style="background:url('${user.data().userimg}') center center;"></div></td>
+                        <td>${user.data().username}</td>
+                    </tr>
+                    </table>
+                    </a>
+                    `);
+                 }
+                });
+            }
+        });
         });
        });
 
@@ -180,7 +192,7 @@ if(user){
     .get()
     .then(function(querySnapshot){
         if(!querySnapshot.size){
-            window.location.assign("404.html");
+            window.location.assign("/error");
             return;
         }
         querySnapshot.forEach(function(doc) {
@@ -240,17 +252,19 @@ if(user){
             db.collection("users").where("userid", "==", doc.data().textby)
              .get()
              .then(function(querySnapshot){
+                var text = doc.data().text;
+                text = text.replace(/#(\w+)/g, '<a href="/cloud#$1" target="_blank">#$1</a>');
              querySnapshot.forEach(function(document){
                 $("#posts").append(
-                    ` <div class="container">
+                    `<div class="container">
                     <img src="" width="100%" height="auto">
                     <div class="details">
                         <div class="who_posted">
-                        <a href="profile.html#${document.data().username}" target="_blank"><b>@${document.data().username}</b></a>
+                        <a href="/profile#${document.data().username}" target="_blank"><b>@${document.data().username}</b></a>
                             <time>${new Date(doc.data().time).toDateString()} @ ${new Date(doc.data().time).toLocaleTimeString()}</time>
                         </div>
                         <p>
-                        ${doc.data().text}
+                        ${text}
                         </p>
                         <div class="interact">
                             <button id="like_${doc.id}" onclick="like('${doc.id}')">
@@ -298,7 +312,7 @@ if(user){
             $("#whospost").html('@'+doc.data().username+"'s Posts");
             var user = firebase.auth().currentUser;
             if(getUserName == user.displayName){
-                $("#which-btn").html('<a href="home.html#edit"><button>Edit Profile</button></a>');
+                $("#which-btn").html('<a href="/home#edit"><button>Edit Profile</button></a>');
             }
             else{
             //+1 impression
@@ -339,6 +353,7 @@ if(user){
                .onSnapshot(function(querySnapshot){
                 $('#followers').html(`${querySnapshot.size}<br>Followers`);
                 if(querySnapshot.empty == true){
+                    $('#follow-stats').html('<div onclick="followhide()" class="forFollow"><i class="fas fa-times"></i></div>');                    
                     $('#follow-stats').append("nothing to see here");
                     return;
                 }
@@ -346,7 +361,7 @@ if(user){
                     db.collection("users").doc(doc.data().followedby).get().then(function(user){
                     if (doc.exists) {
                     $('#follow-stats').append(`
-                    <a href="profile.html#${user.data().username}" target="_blank">
+                    <a href="/profile#${user.data().username}" target="_blank">
                     <table class="followTbl">            
                     <tr>
                         <td><div style="background:url('${user.data().userimg}') center center;"></div></td>
@@ -364,23 +379,39 @@ if(user){
                .onSnapshot(function(querySnapshot){
                   $('#following').html(`${querySnapshot.size}<br>Following`);
                   if(querySnapshot.empty == true){
+                    $('#following-stats').html('<div onclick="followhide()" class="forFollow"><i class="fas fa-times"></i></div>');
                     $('#following-stats').append("nothing to see here");
                     return;
                    }
                   querySnapshot.forEach(function(doc){
-                    db.collection("users").doc(doc.data().followed).get().then(function(user){
-                        if(doc.exists){
-                        $('#following-stats').append(`
-                        <a href="profile.html#${user.data().username}" target="_blank">
-                        <table class="followTbl">            
-                        <tr>
-                            <td><div style="background:url('${user.data().userimg}') center center;"></div></td>
-                            <td>${user.data().username}</td>
-                        </tr>
-                        </table>
-                        </a>
-                        `);
-                     }
+                    db.collection("cloud").doc(doc.data().followed).get().then(function(cloud){
+                        if(cloud.exists){
+                                $('#following-stats').append(`
+                                <a href="/cloud#${cloud.data().cloudName}" target="_blank">
+                                <table class="followTbl">            
+                                <tr>
+                                    <td><div style="background:url('${cloud.data().cloudImage}') center center;"></div></td>
+                                    <td>#${cloud.data().cloudName}</td>
+                                </tr>
+                                </table>
+                                </a>
+                                `);
+                        }else{
+                            db.collection("users").doc(doc.data().followed).get().then(function(user){
+                                if(doc.exists){
+                                $('#following-stats').append(`
+                                <a href="/profile#${user.data().username}" target="_blank">
+                                <table class="followTbl">            
+                                <tr>
+                                    <td><div style="background:url('${user.data().userimg}') center center;"></div></td>
+                                    <td>${user.data().username}</td>
+                                </tr>
+                                </table>
+                                </a>
+                                `);
+                             }
+                            });
+                        }
                     });
                 });
                });
@@ -391,7 +422,7 @@ if(user){
         });
     }
 }else{
-    window.location.assign("index.html");
+    window.location.assign("/");
 }
 });
 
@@ -409,69 +440,4 @@ setTimeout(function(){
     $('#dream-container').css("display","none");
     $('#dream-container').removeClass("animated fadeOut");
 },800);
-}
-
-$("#followers").click(function(){
-$('#follow-container').css("display","flex");
-$('#follow-container').addClass("animated fadeIn");
-$('#follow-stats').css("display","inherit");
-$('#following-stats').css("display","none");
-setTimeout(function(){
-    $('#follow-container').removeClass("animated fadeIn");
-},800);
-});
-
-$("#following").click(function(){
-$('#follow-container').css("display","flex");
-$('#follow-container').addClass("animated fadeIn");
-$('#follow-stats').css("display","none");
-$('#following-stats').css("display","inherit");
-setTimeout(function(){
-    $('#follow-container').removeClass("animated fadeIn");
-},800);
-});
-
-function followhide(){
-$('#follow-container').addClass("animated fadeOut");
-setTimeout(function(){
-    $('#follow-container').css("display","none");
-    $('#follow-container').removeClass("animated fadeOut");
-},800);
-}
-
-function follow(followid){
-$('#follow').attr("disabled",true);
-var user = firebase.auth().currentUser;
-db.collection("follow").doc(followid+user.uid).set({
-    followed: followid,
-    followedby: user.uid,
-    time: Date.now()
-})
-.then(function() {
-  $('#which-btn').html(`<button id="unfollow" onclick="unfollow('${followid}')">Unfollow</button>`);
-  $('#follow').attr("disabled",false);
-})
-.catch(function(error){
-  console.log(error);
-});
-}
-
-function unfollow(unfollowid){
-$('#unfollow').attr("disabled",true);
-var user = firebase.auth().currentUser;
-db.collection("follow").where("followed", "==", unfollowid).where("followedby","==", user.uid)
-.get()
-.then(function(querySnapshot){
-    querySnapshot.forEach(function(doc){
-
-   db.collection("follow").doc(doc.id).delete()
-   .then(function() {
-     $('#which-btn').html(`<button id="follow" onclick="follow('${unfollowid}')">Follow</button>`);
-     $('#unfollow').attr("disabled",false);
-   })
-   .catch(function(error){
-     console.log(error);
-   });
-});
-});
 }

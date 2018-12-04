@@ -30,8 +30,8 @@
                 </td>
                 <td>
                     <nav style="text-align:right;">
-                        <a href="home.html">Home</a>
-                        <a href="profile.html">Profile</a>
+                        <a href="/home">Home</a>
+                        <a href="/profile">Profile</a>
                         <a onclick="logout()">Logout</a>
                     </nav>
                 </td>
@@ -80,7 +80,7 @@
         <div id="userimg" style="background:#000;"></div>
         <div id="change">
             <h3>change profile image</h3>
-            <input type="text" value="loading..." id="home-userimg" spellcheck="false" required><br>
+            <input type="file" id="home-userimg" accept="image/*" required><br>
             <h3>change username</h3>
             <input type="text" value="loading..." id="home-username" spellcheck="false" maxlength="30" required><br>
             <button id="updateProfile">Save</button>
@@ -92,33 +92,45 @@
 
     <div id="explore">
         <div id="options">
-            <div id="option1" class="option1" onclick="showpost()"><i class="fas fa-plus circle"></i></div>
+            <div id="option1" class="option1" onclick="showpost()"><i class="fas fa-plus circle plus"></i></div>
             <div class="option1" onclick="showedit()"><i class="fas fa-pencil-alt circle"></i></div>
+            <div class="option1" onclick="showcloud()"><i class="fas fa-cloud circle"></i></div>
             <div class="option1" id="theseNotify"></div>
         </div>
 
         <div id="newpost" class="">
-        <h4 id="addPost">Add a New Post</h4>
-        <h4 id="addDream">Add a Dream</h4>
-        <div id="post">
-        <textarea rows="4" maxlength="1000" placeholder="What's Happening?" id="description"></textarea><br>
-        <button id="post_data">Post &nbsp; <i class="fas fa-long-arrow-alt-right"></i></button>
-        <div id="post_status"></div>
+            <h4 id="addPost">Add a New Post</h4>
+            <h4 id="addDream">Add a Dream</h4>
+            <div id="post">
+            <textarea rows="4" maxlength="1000" placeholder="What's Happening?" id="description"></textarea><br>
+            <div id="cloudTags"></div>
+            <button id="post_data">Post &nbsp; <i class="fas fa-long-arrow-alt-right"></i></button>
+            <div id="post_status"></div>
+            </div>
+            <div id="dream" style="display:none;">
+            <textarea rows="4" maxlength="1000" placeholder="Your Dream..." id="dreamText"></textarea><br>
+            <button id="dream_data">Post &nbsp; <i class="fas fa-long-arrow-alt-right"></i></button>
+            <div id="dream_status"></div>
+            </div>
         </div>
-        <div id="dream" style="display:none;">
-        <textarea rows="4" maxlength="1000" placeholder="Your Dream..." id="dreamText"></textarea><br>
-        <button id="dream_data">Post &nbsp; <i class="fas fa-long-arrow-alt-right"></i></button>
-        <div id="dream_status"></div>
-        </div>
-
+        <div id="cloud">
+            <h4>Create a New Cloud</h4>
+            <div id="cloudDefaultImg"></div>
+            <input type="file" id="cloudimg" accept="image/*" required>
+            <input type="text" rows="4" maxlength="30" placeholder="cloud name eg : music or gaming" id="cloudname"><br>
+            <button id="cloud_data">Let's Go &nbsp; <i class="fas fa-long-arrow-alt-right"></i></button>
+            <button onclick="hidecloud()">Cancel</button><br>
+            <h4 id="cloud_error"></h4>
+            <a href="/about#cloud" target="_blank">what's a cloud?</a>
         </div>
         <br>
         <h2>Feed</h2>
         <div id="feed"></div>
     </div>
-        <script src="https://www.gstatic.com/firebasejs/5.5.4/firebase-app.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/5.5.4/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.5.5/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.5.5/firebase-auth.js"></script>
         <script src="https://www.gstatic.com/firebasejs/5.5.5/firebase-firestore.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.5.9/firebase-storage.js"></script>
         <script type="text/javascript">
         var config = {
            apiKey: "AIzaSyBZ1bqfOwkj4vMEgRJG5gdQR_HCM_sM6i4",
@@ -128,9 +140,8 @@
            storageBucket: "wybemfapp.appspot.com",
            messagingSenderId: "997295182751"
         };
-         firebase.initializeApp(config);
-        </script>
-        <script src="home.js" type="text/javascript"></script>
+         firebase.initializeApp(config);        </script>
         <script src="common.js" type="text/javascript"></script>
+        <script src="home.js" type="text/javascript"></script>
 </body>
 </html>

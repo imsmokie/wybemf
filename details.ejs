@@ -27,8 +27,7 @@
             <h1>One More Step</h1>
             <h3>Let's get you a Name and Profile Image</h3>
             <div id="userimg" style="background:url('https://i.imgur.com/cntrc8m.png') center center;"></div><br>
-            <input type="text" placeholder="image link" id="details-img" required>
-            <br>
+            <input type="file" id="details-img" accept="image/*" required><br>
             <input type="text" placeholder="username" id="username" maxlength="30" required><br>
             <button id="update">Continue</button>
             <h4 id="details-error"></h4>
@@ -36,6 +35,7 @@
         <script src="https://www.gstatic.com/firebasejs/5.5.4/firebase-app.js"></script>
         <script src="https://www.gstatic.com/firebasejs/5.5.4/firebase-auth.js"></script>
         <script src="https://www.gstatic.com/firebasejs/5.5.5/firebase-firestore.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.5.9/firebase-storage.js"></script>
         <script>
         var config = {
            apiKey: "AIzaSyBZ1bqfOwkj4vMEgRJG5gdQR_HCM_sM6i4",
