@@ -43,10 +43,10 @@ auth.sendPasswordResetEmail(email).then(function() {
 firebase.auth().onAuthStateChanged(function(user) {
     if(user){
         if(!user.displayName){
-            window.location.assign("details.html");
+            window.location.assign("/details");
             return;
         }
-        window.location.assign("home.html");
+        window.location.assign("/home");
     }else{
         setTimeout(function(){
           $("#loading").addClass("animated fadeOut");

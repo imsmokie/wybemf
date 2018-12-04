@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>wybemf</title>
+    <link rel="icon" href="img/favicon.png" type="image/png">
+    <link href="index.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div id="loading">
+        <div id="spinner"></div>
+     </div>
+     <header id="header" style="color:#000 !important;">
+            <table>
+                <tr>
+                    <td><div id="logo">wybemf.<sup>Beta</sup></div></td>
+                </tr>
+            </table>
+        </header>
+        <div id="common">
+            <h1>Coming Soon</h1>
+        </div>
+        <script type="text/javascript">
+        setTimeout(function(){
+            $("#loading").addClass("animated fadeOut");
+            setTimeout(function(){
+              $("#loading").removeClass("animated fadeOut");
+              $("#loading").css("display","none");
+            },800);
+          },1000);
+        </script>
+</body>
+</html>

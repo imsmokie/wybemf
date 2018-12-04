@@ -1,3 +1,7 @@
+var db = firebase.firestore();
+db.settings({
+  timestampsInSnapshots: true
+});
 function like(postid){
 $(`#like_${postid}`).attr("disabled",true);
 var user = firebase.auth().currentUser;
@@ -100,7 +104,7 @@ db.collection("comment").where("commentOn", "==", id).orderBy("time","desc")
         querySnapshot.forEach(function(document){
         $('#all-comments').append(
             `<div class="comments animated fadeIn">
-            <a href="profile.html#${document.data().username}" target="_blank">
+            <a href="/profile#${document.data().username}" target="_blank">
             @${document.data().username}</a> &nbsp; ${doc.data().commentText}
             </div>`
         );
@@ -194,7 +198,7 @@ $("#search").keyup(function(){
             return;
         }
     querySnapshot.forEach(function(doc){
-        $("#results").append(`<a href="profile.html#${doc.data().username}" target="_blank"><div class="tr"><table><tr><td><div style="background:url('${doc.data().userimg}') center center;"></div></td><td>${doc.data().username}</td></tr></table></div></a>`);
+        $("#results").append(`<a href="/profile#${doc.data().username}" target="_blank"><div class="tr"><table><tr><td><div style="background:url('${doc.data().userimg}') center center;"></div></td><td>${doc.data().username}</td></tr></table></div></a>`);
     });
     });
     }
@@ -208,4 +212,67 @@ function logout(){
     });
 }
 
-//text.replace(/#(\w+)/g, '<a href="search.html#$1">#$1</a>');
+$("#followers").click(function(){
+$('#follow-container').css("display","flex");
+$('#follow-container').addClass("animated fadeIn");
+$('#follow-stats').css("display","inherit");
+$('#following-stats').css("display","none");
+setTimeout(function(){
+    $('#follow-container').removeClass("animated fadeIn");
+},800);
+});
+
+$("#following").click(function(){
+$('#follow-container').css("display","flex");
+$('#follow-container').addClass("animated fadeIn");
+$('#follow-stats').css("display","none");
+$('#following-stats').css("display","inherit");
+setTimeout(function(){
+    $('#follow-container').removeClass("animated fadeIn");
+},800);
+});
+
+function followhide(){
+$('#follow-container').addClass("animated fadeOut");
+setTimeout(function(){
+    $('#follow-container').css("display","none");
+    $('#follow-container').removeClass("animated fadeOut");
+},800);
+}
+
+function follow(followid){
+$('#follow').attr("disabled",true);
+var user = firebase.auth().currentUser;
+db.collection("follow").doc(followid+user.uid).set({
+    followed: followid,
+    followedby: user.uid,
+    time: Date.now()
+})
+.then(function() {
+  $('#which-btn').html(`<button id="unfollow" onclick="unfollow('${followid}')">Unfollow</button>`);
+  $('#follow').attr("disabled",false);
+})
+.catch(function(error){
+  console.log(error);
+});
+}
+
+function unfollow(unfollowid){
+$('#unfollow').attr("disabled",true);
+var user = firebase.auth().currentUser;
+db.collection("follow").where("followed", "==", unfollowid).where("followedby","==", user.uid)
+.get()
+.then(function(querySnapshot){
+    querySnapshot.forEach(function(doc){
+
+   db.collection("follow").doc(doc.id).delete()
+   .then(function() {
+     $('#which-btn').html(`<button id="follow" onclick="follow('${unfollowid}')">Follow</button>`);
+     $('#unfollow').attr("disabled",false);
+   })
+   .catch(function(error){
+     console.log(error);
+   });
+});
+});
+}
